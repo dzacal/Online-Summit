@@ -6,6 +6,9 @@ import type { TeamMember } from '@/lib/types'
 import Modal from '@/components/Modal'
 import { Plus, Pencil, Trash2, Search } from 'lucide-react'
 
+const DEFAULT_ROLES = ['Coordinator','Manager','Director','Volunteer','Advisor','Speaker Liaison','Partner Liaison','Marketing','Tech','Operations']
+const DEFAULT_DEPARTMENTS = ['Leadership','Operations','Marketing','Technology','Speaker Relations','Partner Relations','Volunteers']
+
 const empty: Omit<TeamMember, 'id' | 'created_at'> = {
   full_name: '', role: '', department: '', email: '', phone: '',
   timezone: '', handle: '', responsibilities: '', notes: '',
@@ -20,8 +23,26 @@ export default function TeamPage() {
   const [editing, setEditing] = useState<TeamMember | null>(null)
   const [form, setForm] = useState(empty)
   const [saving, setSaving] = useState(false)
+  const [roles, setRoles] = useState<string[]>(DEFAULT_ROLES)
+  const [departments, setDepartments] = useState<string[]>(DEFAULT_DEPARTMENTS)
 
-  useEffect(() => { fetchMembers() }, [])
+  useEffect(() => {
+    fetchMembers()
+    fetchOptions()
+  }, [])
+
+  async function fetchOptions() {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('key, value')
+      .in('key', ['team_roles', 'team_departments'])
+    for (const row of data ?? []) {
+      try {
+        if (row.key === 'team_roles') setRoles(JSON.parse(row.value))
+        if (row.key === 'team_departments') setDepartments(JSON.parse(row.value))
+      } catch {}
+    }
+  }
 
   async function fetchMembers() {
     setLoading(true)
@@ -117,22 +138,37 @@ export default function TeamPage() {
       {showModal && (
         <Modal title={editing ? 'Edit Team Member' : 'Add Team Member'} onClose={() => setShowModal(false)}>
           <div className="grid grid-cols-2 gap-4">
+            <div className="col-span-2">
+              <label className="block text-xs font-medium text-gray-600 mb-1">Full Name *</label>
+              <input value={form.full_name ?? ''} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Role</label>
+              <select value={form.role ?? ''} onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="">Select…</option>
+                {roles.map(r => <option key={r} value={r}>{r}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Department</label>
+              <select value={form.department ?? ''} onChange={e => setForm(f => ({ ...f, department: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="">Select…</option>
+                {departments.map(d => <option key={d} value={d}>{d}</option>)}
+              </select>
+            </div>
             {[
-              { label: 'Full Name *', key: 'full_name' },
-              { label: 'Role',        key: 'role' },
-              { label: 'Department',  key: 'department' },
-              { label: 'Email',       key: 'email' },
-              { label: 'Phone',       key: 'phone' },
-              { label: 'Timezone',    key: 'timezone' },
+              { label: 'Email', key: 'email' },
+              { label: 'Phone', key: 'phone' },
+              { label: 'Timezone', key: 'timezone' },
               { label: 'Slack/Discord Handle', key: 'handle' },
             ].map(({ label, key }) => (
-              <div key={key} className={key === 'full_name' ? 'col-span-2' : ''}>
+              <div key={key}>
                 <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>
-                <input
-                  value={(form as any)[key] ?? ''}
-                  onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none"
-                />
+                <input value={(form as any)[key] ?? ''} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
               </div>
             ))}
             <div className="col-span-2">

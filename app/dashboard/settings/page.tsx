@@ -36,6 +36,8 @@ const DROPDOWN_GROUPS = [
   { key: 'session_types',    label: 'Session Types' },
   { key: 'partner_statuses', label: 'Partner Statuses' },
   { key: 'partner_types',    label: 'Partner Types' },
+  { key: 'team_roles',       label: 'Team Roles' },
+  { key: 'team_departments', label: 'Team Departments' },
 ]
 
 function ColorRow({

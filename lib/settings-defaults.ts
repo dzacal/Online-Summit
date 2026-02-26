@@ -30,6 +30,8 @@ export const DEFAULT_SETTINGS = {
   session_types:    '["Keynote","Panel","Workshop","Lightning Talk","Fireside Chat","Interview"]',
   partner_statuses: '["Prospecting","In Discussion","Agreement Sent","Confirmed","Active","Completed","Declined"]',
   partner_types:    '["Sponsor","Media Partner","Community Partner","Co-Organizer","In-Kind","Affiliate"]',
+  team_roles:       '["Coordinator","Manager","Director","Volunteer","Advisor","Speaker Liaison","Partner Liaison","Marketing","Tech","Operations"]',
+  team_departments: '["Leadership","Operations","Marketing","Technology","Speaker Relations","Partner Relations","Volunteers"]',
 }
 
 export type Settings = typeof DEFAULT_SETTINGS
