@@ -29,7 +29,6 @@ export interface TeamMember {
   email: string | null
   phone: string | null
   timezone: string | null
-  handle: string | null
   responsibilities: string | null
   notes: string | null
 }

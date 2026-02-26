@@ -11,7 +11,7 @@ const DEFAULT_DEPARTMENTS = ['Leadership','Operations','Marketing','Technology',
 
 const empty: Omit<TeamMember, 'id' | 'created_at'> = {
   full_name: '', role: '', department: '', company: '', email: '', phone: '',
-  timezone: '', handle: '', responsibilities: '', notes: '',
+  timezone: '', responsibilities: '', notes: '',
 }
 
 export default function TeamPage() {
@@ -103,7 +103,7 @@ export default function TeamPage() {
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                {['Name','Role','Department','Company','Email','Phone','Timezone','Handle',''].map(h => (
+                {['Name','Role','Department','Company','Email','Phone','Timezone',''].map(h => (
                   <th key={h} className="text-left px-4 py-3 font-medium text-gray-600 text-xs uppercase tracking-wide">{h}</th>
                 ))}
               </tr>
@@ -118,7 +118,6 @@ export default function TeamPage() {
                   <td className="px-4 py-3 text-gray-600">{m.email}</td>
                   <td className="px-4 py-3 text-gray-600">{m.phone}</td>
                   <td className="px-4 py-3 text-gray-600">{m.timezone}</td>
-                  <td className="px-4 py-3 text-gray-600">{m.handle}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <button onClick={() => openEdit(m)} className="p-1.5 hover:bg-gray-100 rounded transition text-gray-500">
@@ -169,7 +168,6 @@ export default function TeamPage() {
               { label: 'Email', key: 'email' },
               { label: 'Phone', key: 'phone' },
               { label: 'Timezone', key: 'timezone' },
-              { label: 'Slack/Discord Handle', key: 'handle' },
             ].map(({ label, key }) => (
               <div key={key}>
                 <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>
