@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { DEFAULT_SETTINGS, type Settings } from '@/lib/settings'
+import { DEFAULT_SETTINGS, type Settings } from '@/lib/settings-defaults'
 import { Save, Plus, X } from 'lucide-react'
 
 type Tab = 'colors' | 'content' | 'dropdowns'
