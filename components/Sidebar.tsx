@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   LogOut,
   Globe,
+  Settings,
 } from 'lucide-react'
 
 const navItems = [
@@ -21,6 +22,7 @@ const navItems = [
   { href: '/dashboard/partners',   label: 'Partners',   icon: Handshake },
   { href: '/dashboard/podcasts',   label: 'Podcasts',   icon: Radio },
   { href: '/dashboard/marketing',  label: 'Marketing',  icon: ImageIcon },
+  { href: '/dashboard/settings',   label: 'Settings',   icon: Settings },
 ]
 
 export default function Sidebar() {

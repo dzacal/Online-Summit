@@ -9,28 +9,28 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Tony Cho brand scale (maps to existing brand-X classes across the site)
+        // Brand scale — values set via CSS variables so they can be changed from /dashboard/settings
         brand: {
-          50:  '#EFF7F4',   // very light seafoam tint
-          100: '#CCCCC1',   // soft linen — warmth & comfort
-          200: '#A6DCCD',   // seafoam — freshness & calm
-          300: '#9A9C91',   // cool gray — balance & sophistication
-          400: '#9EA481',   // olive green — nature & harmony
-          500: '#6EA451',   // sage green — growth & regeneration (primary CTA)
-          600: '#4A6264',   // teal — innovation & trust
-          700: '#3D5254',   // deep teal
-          800: '#434C4C',   // charcoal gray — authority & grounding
-          900: '#2F3636',   // deep charcoal
+          50:  'var(--color-brand-50)',
+          100: 'var(--color-brand-100)',
+          200: 'var(--color-brand-200)',
+          300: 'var(--color-brand-300)',
+          400: 'var(--color-brand-400)',
+          500: 'var(--color-brand-500)',
+          600: 'var(--color-brand-600)',
+          700: 'var(--color-brand-700)',
+          800: 'var(--color-brand-800)',
+          900: 'var(--color-brand-900)',
         },
-        // Named semantic tokens for direct use
-        sage:    '#6EA451',
-        seafoam: '#A6DCCD',
-        teal:    '#4A6264',
-        charcoal:'#434C4C',
-        olive:   '#9EA481',
-        linen:   '#CCCCC1',
-        'cool-gray': '#9A9C91',
-        'vision-purple': '#8B7BA8',
+        // Named semantic tokens — resolved at runtime via CSS variables
+        sage:            'var(--color-sage)',
+        seafoam:         'var(--color-seafoam)',
+        teal:            'var(--color-teal)',
+        charcoal:        'var(--color-charcoal)',
+        olive:           'var(--color-olive)',
+        linen:           'var(--color-linen)',
+        'cool-gray':     'var(--color-cool-gray)',
+        'vision-purple': 'var(--color-vision-purple)',
       },
     },
   },

@@ -7,8 +7,8 @@ import Modal from '@/components/Modal'
 import StatusBadge from '@/components/StatusBadge'
 import { Plus, Pencil, Trash2, Search } from 'lucide-react'
 
-const STATUSES: PartnerStatus[] = ['Prospecting','In Discussion','Agreement Sent','Confirmed','Active','Completed','Declined']
-const TYPES = ['Sponsor','Media Partner','Community Partner','Co-Organizer','In-Kind','Affiliate']
+const DEFAULT_STATUSES: PartnerStatus[] = ['Prospecting','In Discussion','Agreement Sent','Confirmed','Active','Completed','Declined']
+const DEFAULT_TYPES = ['Sponsor','Media Partner','Community Partner','Co-Organizer','In-Kind','Affiliate']
 
 const emptyForm = {
   organization: '', partnership_type: '', primary_contact_name: '', primary_contact_title: '',
@@ -31,8 +31,26 @@ export default function PartnersPage() {
   const [editing, setEditing] = useState<Partner | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
+  const [statuses, setStatuses] = useState<string[]>(DEFAULT_STATUSES)
+  const [types, setTypes] = useState<string[]>(DEFAULT_TYPES)
 
-  useEffect(() => { fetchPartners() }, [])
+  useEffect(() => {
+    fetchPartners()
+    fetchOptions()
+  }, [])
+
+  async function fetchOptions() {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('key, value')
+      .in('key', ['partner_statuses', 'partner_types'])
+    for (const row of data ?? []) {
+      try {
+        if (row.key === 'partner_statuses') setStatuses(JSON.parse(row.value))
+        if (row.key === 'partner_types') setTypes(JSON.parse(row.value))
+      } catch {}
+    }
+  }
 
   async function fetchPartners() {
     setLoading(true)
@@ -117,12 +135,12 @@ export default function PartnersPage() {
         <select value={filterType} onChange={e => setFilterType(e.target.value)}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none">
           <option value="All">All Types</option>
-          {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+          {types.map(t => <option key={t} value={t}>{t}</option>)}
         </select>
         <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none">
           <option value="All">All Statuses</option>
-          {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+          {statuses.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
       </div>
 
@@ -181,7 +199,7 @@ export default function PartnersPage() {
                     onChange={e => setForm(p => ({ ...p, partnership_type: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none">
                     <option value="">Select…</option>
-                    {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                    {types.map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
                 </div>
                 {f('website','Website')}
@@ -207,7 +225,7 @@ export default function PartnersPage() {
                   <select value={form.partnership_status}
                     onChange={e => setForm(p => ({ ...p, partnership_status: e.target.value as PartnerStatus }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none">
-                    {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                    {statuses.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
                 {f('agreement_date','Agreement Date','date')}

@@ -211,3 +211,52 @@ CREATE POLICY "Public read confirmed speakers" ON public.speakers
 
 CREATE POLICY "Public read confirmed partners" ON public.partners
   FOR SELECT USING (agreement_signed = TRUE);
+
+-- ============================================================
+-- Site Settings — colors, content, dropdown options
+-- ============================================================
+
+CREATE TABLE public.site_settings (
+  key        TEXT PRIMARY KEY,
+  value      TEXT NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can read settings (needed for CSS variables on public pages)
+CREATE POLICY "Public read settings" ON public.site_settings
+  FOR SELECT USING (true);
+
+-- Only authenticated team members can write settings
+CREATE POLICY "Authenticated write settings" ON public.site_settings
+  FOR ALL USING (auth.role() = 'authenticated');
+
+-- Default values — run once after creating the table
+INSERT INTO public.site_settings (key, value) VALUES
+  ('color_brand_50',       '#EFF7F4'),
+  ('color_brand_100',      '#CCCCC1'),
+  ('color_brand_200',      '#A6DCCD'),
+  ('color_brand_300',      '#9A9C91'),
+  ('color_brand_400',      '#9EA481'),
+  ('color_brand_500',      '#6EA451'),
+  ('color_brand_600',      '#4A6264'),
+  ('color_brand_700',      '#3D5254'),
+  ('color_brand_800',      '#434C4C'),
+  ('color_brand_900',      '#2F3636'),
+  ('color_sage',           '#6EA451'),
+  ('color_seafoam',        '#A6DCCD'),
+  ('color_teal',           '#4A6264'),
+  ('color_charcoal',       '#434C4C'),
+  ('color_olive',          '#9EA481'),
+  ('color_linen',          '#CCCCC1'),
+  ('color_cool_gray',      '#9A9C91'),
+  ('color_vision_purple',  '#8B7BA8'),
+  ('site_title',           'Global Online Regeneration Summit'),
+  ('site_tagline',         'A global gathering of regenerative thinkers, practitioners, and changemakers. Online. Open. Transformative.'),
+  ('site_coming_soon',     'Coming Soon'),
+  ('speaker_statuses',     '["Not Contacted","Outreach Sent","Follow Up Sent","In Conversation","Confirmed","Declined","No Response"]'),
+  ('session_types',        '["Keynote","Panel","Workshop","Lightning Talk","Fireside Chat","Interview"]'),
+  ('partner_statuses',     '["Prospecting","In Discussion","Agreement Sent","Confirmed","Active","Completed","Declined"]'),
+  ('partner_types',        '["Sponsor","Media Partner","Community Partner","Co-Organizer","In-Kind","Affiliate"]')
+ON CONFLICT (key) DO NOTHING;

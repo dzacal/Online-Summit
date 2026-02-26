@@ -1,3 +1,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Default brand color variables — overridden at runtime by settings from Supabase (see layout.tsx) */
+:root {
+  --color-brand-50:  #EFF7F4;
+  --color-brand-100: #CCCCC1;
+  --color-brand-200: #A6DCCD;
+  --color-brand-300: #9A9C91;
+  --color-brand-400: #9EA481;
+  --color-brand-500: #6EA451;
+  --color-brand-600: #4A6264;
+  --color-brand-700: #3D5254;
+  --color-brand-800: #434C4C;
+  --color-brand-900: #2F3636;
+  --color-sage:           #6EA451;
+  --color-seafoam:        #A6DCCD;
+  --color-teal:           #4A6264;
+  --color-charcoal:       #434C4C;
+  --color-olive:          #9EA481;
+  --color-linen:          #CCCCC1;
+  --color-cool-gray:      #9A9C91;
+  --color-vision-purple:  #8B7BA8;
+}

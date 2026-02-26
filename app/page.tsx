@@ -1,13 +1,15 @@
 import { createClient } from '@/lib/supabase/server'
+import { getSettings } from '@/lib/settings'
 import Link from 'next/link'
 
 export default async function PublicHomePage() {
   const supabase = await createClient()
 
-  // Fetch confirmed public data
-  const [{ data: speakers }, { data: partners }] = await Promise.all([
+  // Fetch confirmed public data and site settings in parallel
+  const [{ data: speakers }, { data: partners }, settings] = await Promise.all([
     supabase.from('speakers').select('full_name, organization, title, topic, session_type').eq('confirmed', true).order('full_name'),
     supabase.from('partners').select('organization, partnership_type, website, social_handle').eq('agreement_signed', true).order('organization'),
+    getSettings(),
   ])
 
   return (
@@ -30,12 +32,12 @@ export default async function PublicHomePage() {
       {/* Hero */}
       <section className="bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600 text-white px-6 py-28 text-center">
         <div className="max-w-3xl mx-auto">
-          <p className="text-brand-300 text-sm font-medium uppercase tracking-widest mb-4">Coming Soon</p>
+          <p className="text-brand-300 text-sm font-medium uppercase tracking-widest mb-4">{settings.site_coming_soon}</p>
           <h1 className="text-5xl font-bold leading-tight mb-6">
-            Global Online<br />Regeneration Summit
+            {settings.site_title}
           </h1>
           <p className="text-brand-200 text-xl max-w-xl mx-auto leading-relaxed">
-            A global gathering of regenerative thinkers, practitioners, and changemakers. Online. Open. Transformative.
+            {settings.site_tagline}
           </p>
           <div className="mt-10 flex items-center justify-center gap-4 flex-wrap">
             <a href="#speakers" className="bg-brand-500 hover:bg-brand-400 text-white font-semibold px-6 py-3 rounded-xl transition">

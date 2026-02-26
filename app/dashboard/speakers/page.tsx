@@ -7,10 +7,10 @@ import Modal from '@/components/Modal'
 import StatusBadge from '@/components/StatusBadge'
 import { Plus, Pencil, Trash2, Search, CheckCircle2 } from 'lucide-react'
 
-const STATUSES: ResponseStatus[] = [
+const DEFAULT_STATUSES: ResponseStatus[] = [
   'Not Contacted','Outreach Sent','Follow Up Sent','In Conversation','Confirmed','Declined','No Response'
 ]
-const SESSION_TYPES = ['Keynote','Panel','Workshop','Lightning Talk','Fireside Chat','Interview']
+const DEFAULT_SESSION_TYPES = ['Keynote','Panel','Workshop','Lightning Talk','Fireside Chat','Interview']
 
 const emptyForm = {
   full_name: '', organization: '', title: '', topic: '', session_type: '',
@@ -33,8 +33,26 @@ export default function SpeakersPage() {
   const [editing, setEditing] = useState<Speaker | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
+  const [statuses, setStatuses] = useState<string[]>(DEFAULT_STATUSES)
+  const [sessionTypes, setSessionTypes] = useState<string[]>(DEFAULT_SESSION_TYPES)
 
-  useEffect(() => { fetchSpeakers() }, [])
+  useEffect(() => {
+    fetchSpeakers()
+    fetchOptions()
+  }, [])
+
+  async function fetchOptions() {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('key, value')
+      .in('key', ['speaker_statuses', 'session_types'])
+    for (const row of data ?? []) {
+      try {
+        if (row.key === 'speaker_statuses') setStatuses(JSON.parse(row.value))
+        if (row.key === 'session_types') setSessionTypes(JSON.parse(row.value))
+      } catch {}
+    }
+  }
 
   async function fetchSpeakers() {
     setLoading(true)
@@ -127,7 +145,7 @@ export default function SpeakersPage() {
         <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none">
           <option value="All">All Statuses</option>
-          {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+          {statuses.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
       </div>
 
@@ -192,7 +210,7 @@ export default function SpeakersPage() {
                     onChange={e => setForm(f => ({ ...f, session_type: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none">
                     <option value="">Select…</option>
-                    {SESSION_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                    {sessionTypes.map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
                 </div>
                 {field('honorarium','Honorarium ($)', 'number')}
@@ -218,7 +236,7 @@ export default function SpeakersPage() {
                   <select value={form.response_status}
                     onChange={e => setForm(f => ({ ...f, response_status: e.target.value as ResponseStatus }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none">
-                    {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                    {statuses.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
               </div>
