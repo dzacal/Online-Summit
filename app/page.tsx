@@ -28,7 +28,7 @@ export default async function PublicHomePage() {
       </nav>
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-brand-900 via-brand-800 to-green-900 text-white px-6 py-28 text-center">
+      <section className="bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600 text-white px-6 py-28 text-center">
         <div className="max-w-3xl mx-auto">
           <p className="text-brand-300 text-sm font-medium uppercase tracking-widest mb-4">Coming Soon</p>
           <h1 className="text-5xl font-bold leading-tight mb-6">
@@ -49,19 +49,19 @@ export default async function PublicHomePage() {
       </section>
 
       {/* Stats banner */}
-      <section className="bg-brand-700 text-white px-6 py-6">
+      <section className="bg-brand-800 text-white px-6 py-6">
         <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-12 text-center">
           <div>
             <p className="text-3xl font-bold">{speakers?.length ?? 0}+</p>
-            <p className="text-brand-300 text-sm mt-0.5">Confirmed Speakers</p>
+            <p className="text-brand-200 text-sm mt-0.5">Confirmed Speakers</p>
           </div>
           <div>
             <p className="text-3xl font-bold">{partners?.length ?? 0}+</p>
-            <p className="text-brand-300 text-sm mt-0.5">Partner Organizations</p>
+            <p className="text-brand-200 text-sm mt-0.5">Partner Organizations</p>
           </div>
           <div>
             <p className="text-3xl font-bold">100%</p>
-            <p className="text-brand-300 text-sm mt-0.5">Online & Free</p>
+            <p className="text-brand-200 text-sm mt-0.5">Online & Free</p>
           </div>
         </div>
       </section>
@@ -76,7 +76,7 @@ export default async function PublicHomePage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {speakers.map((s, i) => (
               <div key={i} className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-md transition">
-                <div className="w-12 h-12 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold text-lg mb-4">
+                <div className="w-12 h-12 rounded-full bg-brand-200 flex items-center justify-center text-brand-700 font-bold text-lg mb-4">
                   {s.full_name.charAt(0)}
                 </div>
                 <h3 className="font-semibold text-gray-900 text-lg">{s.full_name}</h3>
