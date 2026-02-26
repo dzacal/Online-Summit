@@ -25,6 +25,7 @@ export interface TeamMember {
   full_name: string
   role: string | null
   department: string | null
+  company: string | null
   email: string | null
   phone: string | null
   timezone: string | null

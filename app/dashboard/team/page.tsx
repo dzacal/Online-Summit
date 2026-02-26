@@ -10,7 +10,7 @@ const DEFAULT_ROLES = ['Coordinator','Manager','Director','Volunteer','Advisor',
 const DEFAULT_DEPARTMENTS = ['Leadership','Operations','Marketing','Technology','Speaker Relations','Partner Relations','Volunteers']
 
 const empty: Omit<TeamMember, 'id' | 'created_at'> = {
-  full_name: '', role: '', department: '', email: '', phone: '',
+  full_name: '', role: '', department: '', company: '', email: '', phone: '',
   timezone: '', handle: '', responsibilities: '', notes: '',
 }
 
@@ -73,7 +73,7 @@ export default function TeamPage() {
   }
 
   const filtered = members.filter(m =>
-    `${m.full_name} ${m.role} ${m.department} ${m.email}`.toLowerCase().includes(search.toLowerCase())
+    `${m.full_name} ${m.role} ${m.department} ${m.company} ${m.email}`.toLowerCase().includes(search.toLowerCase())
   )
 
   return (
@@ -103,7 +103,7 @@ export default function TeamPage() {
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                {['Name','Role','Department','Email','Phone','Timezone','Handle',''].map(h => (
+                {['Name','Role','Department','Company','Email','Phone','Timezone','Handle',''].map(h => (
                   <th key={h} className="text-left px-4 py-3 font-medium text-gray-600 text-xs uppercase tracking-wide">{h}</th>
                 ))}
               </tr>
@@ -114,6 +114,7 @@ export default function TeamPage() {
                   <td className="px-4 py-3 font-medium text-gray-900">{m.full_name}</td>
                   <td className="px-4 py-3 text-gray-600">{m.role}</td>
                   <td className="px-4 py-3 text-gray-600">{m.department}</td>
+                  <td className="px-4 py-3 text-gray-600">{m.company}</td>
                   <td className="px-4 py-3 text-gray-600">{m.email}</td>
                   <td className="px-4 py-3 text-gray-600">{m.phone}</td>
                   <td className="px-4 py-3 text-gray-600">{m.timezone}</td>
@@ -158,6 +159,11 @@ export default function TeamPage() {
                 <option value="">Select…</option>
                 {departments.map(d => <option key={d} value={d}>{d}</option>)}
               </select>
+            </div>
+            <div className="col-span-2">
+              <label className="block text-xs font-medium text-gray-600 mb-1">Company / Organisation</label>
+              <input value={form.company ?? ''} onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
             </div>
             {[
               { label: 'Email', key: 'email' },
