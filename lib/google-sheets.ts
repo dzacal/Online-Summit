@@ -17,18 +17,18 @@ async function getToken(): Promise<string> {
 }
 
 // Column order (A–M):
-// A=podcast_name  B=response_status  C=notes  D=client_notes
-// E=rating        F=social_handle    G=monthly_listeners  H=rep
+// A=response_status  B=notes  C=client_notes  D=rating
+// E=podcast_name     F=social_handle  G=monthly_listeners  H=rep
 // I=recording_format  J=location  K=audience_niche  L=episode_url  M=id
 
 export function rowToRecord(values: string[]) {
   const v = (i: number) => (values[i] ?? '').trim()
   return {
-    podcast_name: v(0),
-    response_status: v(1) || 'Not Contacted',
-    notes: v(2) || null,
-    client_notes: v(3) || null,
-    rating: v(4) ? Number(v(4)) : null,
+    response_status: v(0) || 'Not Contacted',
+    notes: v(1) || null,
+    client_notes: v(2) || null,
+    rating: v(3) ? Number(v(3)) : null,
+    podcast_name: v(4),
     social_handle: v(5) || null,
     monthly_listeners: v(6) ? Number(v(6)) : null,
     rep: v(7) || null,
@@ -41,11 +41,11 @@ export function rowToRecord(values: string[]) {
 
 export function recordToRow(record: Record<string, any>): string[] {
   return [
-    record.podcast_name ?? '',
     record.response_status ?? '',
     record.notes ?? '',
     record.client_notes ?? '',
     record.rating != null ? String(record.rating) : '',
+    record.podcast_name ?? '',
     record.social_handle ?? '',
     record.monthly_listeners != null ? String(record.monthly_listeners) : '',
     record.rep ?? '',
