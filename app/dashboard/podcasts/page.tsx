@@ -32,6 +32,7 @@ export default function PodcastsPage() {
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
   const [syncing, setSyncing] = useState(false)
+  const [importing, setImporting] = useState(false)
   const [syncMsg, setSyncMsg] = useState('')
 
   useEffect(() => { fetchPodcasts() }, [])
@@ -84,6 +85,21 @@ export default function PodcastsPage() {
     setTimeout(() => setSyncMsg(''), 5000)
   }
 
+  async function handleImportFromSheet() {
+    setImporting(true)
+    setSyncMsg('')
+    const res = await fetch('/api/sync/import-sheet', { method: 'POST' })
+    const json = await res.json()
+    if (json.error) {
+      setSyncMsg(`Error: ${json.error}`)
+    } else {
+      setSyncMsg(`Imported ${json.imported} from sheet.`)
+      fetchPodcasts()
+    }
+    setImporting(false)
+    setTimeout(() => setSyncMsg(''), 5000)
+  }
+
   async function handleDelete(id: string) {
     if (!confirm('Remove this podcast?')) return
     await supabase.from('podcasts').delete().eq('id', id)
@@ -123,6 +139,11 @@ export default function PodcastsPage() {
         </div>
         <div className="flex items-center gap-2">
           {syncMsg && <span className="text-xs text-gray-500">{syncMsg}</span>}
+          <button onClick={handleImportFromSheet} disabled={importing}
+            className="flex items-center gap-2 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium px-4 py-2 rounded-lg transition text-sm disabled:opacity-50">
+            <RefreshCw size={16} className={importing ? 'animate-spin' : ''} />
+            {importing ? 'Importing…' : 'Import from Sheet'}
+          </button>
           <button onClick={handleSyncToSheet} disabled={syncing}
             className="flex items-center gap-2 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium px-4 py-2 rounded-lg transition text-sm disabled:opacity-50">
             <RefreshCw size={16} className={syncing ? 'animate-spin' : ''} />
