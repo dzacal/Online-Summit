@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import type { Podcast, ResponseStatus } from '@/lib/types'
 import Modal from '@/components/Modal'
 import StatusBadge from '@/components/StatusBadge'
-import { Plus, Pencil, Trash2, Search, ExternalLink } from 'lucide-react'
+import { Plus, Pencil, Trash2, Search, ExternalLink, RefreshCw } from 'lucide-react'
 
 const STATUSES: ResponseStatus[] = ['Not Contacted','Outreach Sent','Follow Up Sent','Confirmed','Declined','No Response']
 const PODCAST_STATUSES = [...STATUSES, 'Recorded' as any, 'Published' as any]
@@ -18,6 +18,7 @@ const emptyForm = {
   confirmed: false, recording_date: '', recording_format: '',
   publish_date: '', episode_title: '', episode_url: '',
   talking_points: '', assets_sent: false, notes: '',
+  rating: '' as any, rep: '', location: '', client_notes: '',
 }
 
 export default function PodcastsPage() {
@@ -30,6 +31,8 @@ export default function PodcastsPage() {
   const [editing, setEditing] = useState<Podcast | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
+  const [syncing, setSyncing] = useState(false)
+  const [syncMsg, setSyncMsg] = useState('')
 
   useEffect(() => { fetchPodcasts() }, [])
 
@@ -65,6 +68,20 @@ export default function PodcastsPage() {
     setSaving(false)
     setShowModal(false)
     fetchPodcasts()
+  }
+
+  async function handleSyncToSheet() {
+    setSyncing(true)
+    setSyncMsg('')
+    const res = await fetch('/api/sync/to-sheet', { method: 'POST' })
+    const json = await res.json()
+    if (json.error) {
+      setSyncMsg(`Error: ${json.error}`)
+    } else {
+      setSyncMsg(`Synced! ${json.updated} updated, ${json.added} added to sheet.`)
+    }
+    setSyncing(false)
+    setTimeout(() => setSyncMsg(''), 5000)
   }
 
   async function handleDelete(id: string) {
@@ -104,9 +121,17 @@ export default function PodcastsPage() {
             {' · '}{podcasts.length} total
           </p>
         </div>
-        <button onClick={openAdd} className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-medium px-4 py-2 rounded-lg transition text-sm">
-          <Plus size={16} /> Add Podcast
-        </button>
+        <div className="flex items-center gap-2">
+          {syncMsg && <span className="text-xs text-gray-500">{syncMsg}</span>}
+          <button onClick={handleSyncToSheet} disabled={syncing}
+            className="flex items-center gap-2 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium px-4 py-2 rounded-lg transition text-sm disabled:opacity-50">
+            <RefreshCw size={16} className={syncing ? 'animate-spin' : ''} />
+            {syncing ? 'Syncing…' : 'Sync to Sheet'}
+          </button>
+          <button onClick={openAdd} className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-medium px-4 py-2 rounded-lg transition text-sm">
+            <Plus size={16} /> Add Podcast
+          </button>
+        </div>
       </div>
 
       <div className="flex items-center gap-3 mb-4 flex-wrap">
@@ -244,6 +269,20 @@ export default function PodcastsPage() {
                 onChange={e => setForm(p => ({ ...p, notes: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none resize-none" />
             </div>
+            <section>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Additional Info</p>
+              <div className="grid grid-cols-2 gap-3">
+                {fld('rep', 'Rep / Account Manager')}
+                {fld('location', 'Location')}
+                {fld('rating', 'Rating (1–5)', 'number')}
+                <div className="col-span-2">
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Client Notes</label>
+                  <textarea rows={2} value={(form as any).client_notes ?? ''}
+                    onChange={e => setForm(p => ({ ...p, client_notes: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none resize-none" />
+                </div>
+              </div>
+            </section>
           </div>
           <div className="flex justify-end gap-3 mt-6">
             <button onClick={() => setShowModal(false)} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition">Cancel</button>

@@ -113,6 +113,10 @@ export interface Podcast {
   talking_points: string | null
   assets_sent: boolean
   notes: string | null
+  rating: number | null
+  rep: string | null
+  location: string | null
+  client_notes: string | null
 }
 
 export interface MarketingAsset {
